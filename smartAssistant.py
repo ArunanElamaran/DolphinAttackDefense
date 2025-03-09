@@ -19,9 +19,11 @@ import os
 TARGET_FILE = "audio.wav"
 
 # Human Detection Model
+humanDetector = CloudHumanDetection("ObjectDetection/key.txt", "ObjectDetection/environmentImage.jpg")
+# humanDetector = LocalHumanDetection("ObjectDetection/environmentImage.jpg")
 
-
-# Transcription Model
+# Shared flag to indicate if a person is detected
+person_detected_flag = threading.Event()
 
 # Thread 1: Transcribe the recorded request
 def transcription():
@@ -29,15 +31,14 @@ def transcription():
     for i in range(5):
         print(f"Task One Running... {i}")
         time.sleep(1)
-    print("Task One Completed")
+    print("Transcription Completed")
 
 # Thread 2: Determine if there is a person present in the environment/setting
 def human_detection():
-    print("Task Two Started")
-    for i in range(5):
-        print(f"Task Two Running... {i}")
-        time.sleep(1)
-    print("Task Two Completed")
+    if humanDetector.identify_person():
+        print("Person detected! Exiting early.")
+        person_detected_flag.set()  # Set flag if a person is detected
+    print("Human Detection Completed")
 
 # Custom Event Handler for file monitoring
 class AudioFileHandler(FileSystemEventHandler):
@@ -53,6 +54,9 @@ class AudioFileHandler(FileSystemEventHandler):
 
 # Function to run two threads
 def run_threads():
+    global person_detected_flag
+    person_detected_flag.clear()  # Reset flag before new detection
+
     thread1 = threading.Thread(target=transcription)
     thread2 = threading.Thread(target=human_detection)
 
@@ -60,9 +64,16 @@ def run_threads():
     thread1.start()
     thread2.start()
 
-    # Wait for both threads to finish
-    thread1.join()
+    # Wait for human detection first
     thread2.join()
+
+    # If a person is detected, exit early
+    if person_detected_flag.is_set():
+        print("Exiting early from run_threads(). Transcription skipped.")
+        return
+
+    # Otherwise, continue transcription
+    thread1.join()
 
 # Watchdog observer setup
 def monitor_directory():
