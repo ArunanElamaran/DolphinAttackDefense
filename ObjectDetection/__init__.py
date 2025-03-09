@@ -1,0 +1,2 @@
+from .LocalHumanDetection import LocalHumanDetection
+from .CloudHumanDetection import CloudHumanDetection

@@ -8,10 +8,11 @@ class LocalHumanDetection:
         """
         Constructor to initialize the model and image processor.
         """
+        self.type = "LocalHumanDetection"
         self.image_file = image_file  # Image file to be processed
         self.model = YolosForObjectDetection.from_pretrained('hustvl/yolos-tiny')  # Load YOLO model
         self.image_processor = YolosImageProcessor.from_pretrained("hustvl/yolos-tiny")  # Load image processor
-
+    
     def identify_person(self) -> bool:
         """
         Detects if a person is present in the image using YOLOS.
@@ -39,11 +40,15 @@ class LocalHumanDetection:
 
             # Check if the detected object is a person (COCO class "person" is typically ID 0)
             if label_name.lower() == "person":
+                # TO DO: ADD CHECK FOR DISTANCE
                 return True  # Person detected
 
         return False  # No person detected
 
 # Example Usage
-if __name__ == "__main__":
-    detector = LocalHumanDetection("environmentImage.jpg")
+def test():
+    detector = LocalHumanDetection("../environmentImage.jpg")
     print("Person detected:", detector.identify_person())
+
+if __name__ == "__main__":
+    test()

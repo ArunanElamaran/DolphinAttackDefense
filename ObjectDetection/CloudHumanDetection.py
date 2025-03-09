@@ -9,6 +9,9 @@ class CloudHumanDetection:
     
     # Constructor
     def __init__(self, key_file, image_file) -> None:
+        
+        self.type = "CloudHumanDetection"
+
         # Image file that will get updated upon each new request
         self.image_file = image_file
 
@@ -53,8 +56,9 @@ class CloudHumanDetection:
         response_text = completion.choices[0].message.content.strip()
         return response_text.lower() == "yes."
 
+# Example Usage
 def test():
-    detector = CloudHumanDetection("key.txt", "environmentImage.jpg")
+    detector = CloudHumanDetection("key.txt", "../environmentImage.jpg")
     print(detector.identify_person())
 
 if __name__ == "__main__":

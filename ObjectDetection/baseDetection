@@ -1,0 +1,12 @@
+from abc import ABC, abstractmethod
+
+class BaseDetector(ABC):
+    @abstractmethod
+    def detect(self, image):
+        """Method that must be implemented by all child classes."""
+        pass
+
+    @abstractmethod
+    def process_results(self, results):
+        """Method that must be implemented by all child classes."""
+        pass
