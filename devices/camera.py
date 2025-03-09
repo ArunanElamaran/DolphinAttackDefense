@@ -16,6 +16,26 @@ class LidarCamera:
         self.color_image_path = depth_image
 
 	
+    def get_color_matrix(self):
+        pipeline =self.rs.pipeline()
+        pipeline.start()
+
+        try:
+            while True:
+            # Create a pipeline object. This object configures the streaming camera and owns it's handle
+                for i in range(3):
+                	frames = pipeline.wait_for_frames()
+                frames = pipeline.wait_for_frames()
+                color = frames.get_color_frame()
+                if not color:
+                    continue
+                color_data = color.as_frame().get_data()
+                np_image = self.np.asanyarray(color_data)
+                return np_image
+                break
+        finally:
+            pipeline.stop()
+    
     def get_depth_matrix(self):
         # Create a context object. This object owns the handles to all connected realsense devices
         pipeline = self.rs.pipeline()
@@ -49,7 +69,9 @@ class LidarCamera:
 
 # Example Usage
 def test():
-    camera = LidarCamera()
+    import os
+    path = os.getcwd()
+    camera = LidarCamera(path+"../environmentImage.jpg", path+"../depthImage.jpg")
     camera.get_color_image()
     camera.get_depth_image()
 
