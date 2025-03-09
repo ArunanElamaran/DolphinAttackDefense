@@ -50,6 +50,8 @@ class LidarCamera:
 # Example Usage
 def test():
     camera = LidarCamera()
+    camera.get_color_image()
+    camera.get_depth_image()
 
 if __name__ == "__main__":
     test()
