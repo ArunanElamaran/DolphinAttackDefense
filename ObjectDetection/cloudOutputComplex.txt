@@ -1,0 +1,43 @@
+Image: ../pictureSamples/D435/photoOfphoto_Color.png
+Person detected: False
+Human detection took 1.88 seconds.
+
+Image: ../pictureSamples/D435/noHumanPresent_Color.png
+Person detected: False
+Human detection took 2.05 seconds.
+
+Image: ../pictureSamples/D435/discussionNoLooking_Color.png
+Person detected: False
+Human detection took 1.94 seconds.
+
+Image: ../pictureSamples/D435/noEngagement_Color.png
+Person detected: False
+Human detection took 3.65 seconds.
+
+Image: ../pictureSamples/D435/lookingAt_Color.png
+Person detected: True
+Human detection took 5.17 seconds.
+
+Image: ../pictureSamples/D435/lookingAway_Color.png
+Person detected: False
+Human detection took 2.15 seconds.
+
+Image: ../pictureSamples/Internet/facing.jpg
+Person detected: True
+Human detection took 2.55 seconds.
+
+Image: ../pictureSamples/Internet/wallPhoto.jpg
+Person detected: False
+Human detection took 2.67 seconds.
+
+Image: ../pictureSamples/Internet/convoPhoto3.jpg
+Person detected: False
+Human detection took 1.84 seconds.
+
+Image: ../pictureSamples/Internet/convoPhoto2.jpg
+Person detected: False
+Human detection took 2.56 seconds.
+
+Image: ../pictureSamples/Internet/convoPhoto1.jpg
+Person detected: False
+Human detection took 2.25 seconds.

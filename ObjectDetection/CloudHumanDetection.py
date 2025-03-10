@@ -33,6 +33,11 @@ class CloudHumanDetection:
         Is there a person present in the setting? A person featured in a canvas or photo does not count. If there is a person present, they must be directly facing and looking at the camera. Answer "yes" or "no".
         '''
 
+        # prompt = '''
+        # Here is a photo taken by a camera. Tell me:
+        # Is there a person in the photo? Answer "yes" or "no".
+        # '''
+
         # Send the image in base64 format
         completion = self.client.chat.completions.create(
             model="gpt-4o",
