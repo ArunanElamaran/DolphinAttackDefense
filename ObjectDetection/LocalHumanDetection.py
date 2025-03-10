@@ -48,7 +48,7 @@ class LocalHumanDetection:
 # Example Usage
 def test():
     import time
-    detector = LocalHumanDetection("../environmentImage.jpg")
+    detector = LocalHumanDetection("../pictureSamples/D435/lookingAt_Color.png")
 
     start_time = time.time()
     output = detector.identify_person()

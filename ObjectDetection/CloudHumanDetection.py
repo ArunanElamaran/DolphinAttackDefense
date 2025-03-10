@@ -59,7 +59,7 @@ class CloudHumanDetection:
 # Example Usage
 def test():
     import time
-    detector = CloudHumanDetection("key.txt", "../environmentImage.jpg")
+    detector = CloudHumanDetection("key.txt", "../pictureSamples/D435/discussionNoLooking_Color.png")
     
     start_time = time.time()
     output = detector.identify_person()
