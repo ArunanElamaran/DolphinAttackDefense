@@ -12,19 +12,20 @@ import queue
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import os
+from openai import OpenAI
 from ObjectDetection import CloudHumanDetection, LocalHumanDetection
-from devices import LidarCamera
+# from devices import LidarCamera
 
 # File to monitor
-TARGET_FILE = "audio.wav"
+TARGET_FILE = "audio.mp3"
 currentWorkingDirectory = os.getcwd() + '/'
-environ_image = currentWorkingDirectory + '/ObjectDetection/environmentImage.jpg'
-depth_image = currentWorkingDirectory + '/ObjectDetection/depthImage.jpg'
+environ_image = currentWorkingDirectory + 'environmentImage.jpg'
+depth_image = currentWorkingDirectory + 'depthImage.jpg'
 
 # Human Detection Model
 # humanDetector = CloudHumanDetection(currentWorkingDirectory+"key.txt", environ_image)
 humanDetector = LocalHumanDetection(environ_image)
-camera = LidarCamera(environ_image, depth_image)
+# camera = LidarCamera(environ_image, depth_image)
 
 # Shared flag for human detection
 person_detected_flag = threading.Event()
@@ -32,16 +33,22 @@ person_detected_flag = threading.Event()
 # Queue to store transcription result
 transcription_queue = queue.Queue()
 
+# Transcription service
+with open(currentWorkingDirectory+"ObjectDetection/key.txt", "r") as file:
+    api_key = file.read().strip()
+client = OpenAI(api_key=api_key)
+
 # Thread 1: Transcribe the recorded request
 def transcription():
-    print("Task One Started")
-    result = ""
-    for i in range(5):
-        result += f"Task One Running... {i}\n"
-        time.sleep(1)
-    result += "Transcription Completed"
-    transcription_queue.put(result)  # Store result in queue
-    print("Transcription Completed")
+    print("Starting Whisper AI transcription...")
+    try:
+        with open(TARGET_FILE, "rb") as audio_file:
+            response = client.audio.transcriptions.create(model="whisper-1", file=audio_file)
+            transcription_queue.put(response.text)  # Store result in queue
+            print("Transcription Completed")
+    except Exception as e:
+        print(f"Error in transcription: {e}")
+        transcription_queue.put("Transcription failed.")
 
 # Thread 2: Determine if there is a person present in the environment/setting
 def human_detection():
@@ -50,22 +57,31 @@ def human_detection():
 
     # Run Cloud Human Detection
     if humanDetector.identify_person() :
-        print("Person detected! Exiting early.")
+        print("Person detected!")
         person_detected_flag.set()  # Set flag if a person is detected
         
     print("Human Detection Completed")
 
 # Custom Event Handler for file monitoring
 class AudioFileHandler(FileSystemEventHandler):
+    last_execution_time = 0
+    cooldown_time = 1  # Cooldown period in seconds
+
     def on_modified(self, event):
         if event.src_path.endswith(TARGET_FILE):
-            print(f"{TARGET_FILE} modified! Running tasks...")
-            run_threads()
+            current_time = time.time()
+            if current_time - self.last_execution_time > self.cooldown_time:
+                print(f"{TARGET_FILE} modified! Running tasks...")
+                self.last_execution_time = current_time
+                run_threads()
 
     def on_created(self, event):
         if event.src_path.endswith(TARGET_FILE):
-            print(f"{TARGET_FILE} created! Running tasks...")
-            run_threads()
+            current_time = time.time()
+            if current_time - self.last_execution_time > self.cooldown_time:
+                print(f"{TARGET_FILE} created! Running tasks...")
+                self.last_execution_time = current_time
+                run_threads()
 
 # Function to run two threads and retrieve transcription result
 def run_threads():
@@ -84,8 +100,8 @@ def run_threads():
     thread2.join()
 
     # If a person is detected, exit early
-    if person_detected_flag.is_set():
-        print("Exiting early from run_threads(). Transcription skipped.")
+    if not person_detected_flag.is_set():
+        print("Exiting early from run_threads(). Person not detected.")
         return
 
     # Otherwise, continue transcription
@@ -95,6 +111,8 @@ def run_threads():
     if not transcription_queue.empty():
         transcription_result = transcription_queue.get()
         print(f"Transcription Result:\n{transcription_result}")  # Use the returned transcription
+
+    print("Both threads finished")
 
 # Watchdog observer setup
 def monitor_directory():
