@@ -47,15 +47,32 @@ class LocalHumanDetection:
 
 # Example Usage
 def test():
+    import os
     import time
-    detector = LocalHumanDetection("../pictureSamples/D435/lookingAt_Color.png")
+    image_dir = "../pictureSamples/"
+    sub_dirs = ["D435", "Internet"]
+    image_files = []
+    
+    # Collect all image file paths
+    for sub_dir in sub_dirs:
+        full_path = os.path.join(image_dir, sub_dir)
+        for file in os.listdir(full_path):
+            if file.endswith(('.png', '.jpg', '.jpeg')):
+                image_files.append(os.path.join(full_path, file))
 
-    start_time = time.time()
-    output = detector.identify_person()
-    end_time = time.time()
 
-    print("Person detected:", output)
-    print(f"Human detection took {end_time - start_time:.2f} seconds.")
+    detector = LocalHumanDetection(image_files[0])  # Initialize with the first image
+
+    for image_file in image_files:
+        detector.image_file = image_file  # Update image file path
+        
+        start_time = time.time()
+        output = detector.identify_person()
+        end_time = time.time()
+        
+        print(f"Image: {image_file}")
+        print("Person detected:", output)
+        print(f"Human detection took {end_time - start_time:.2f} seconds.\n")
 
 if __name__ == "__main__":
     test()
