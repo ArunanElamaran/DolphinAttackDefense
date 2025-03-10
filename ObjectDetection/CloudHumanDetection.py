@@ -58,8 +58,15 @@ class CloudHumanDetection:
 
 # Example Usage
 def test():
+    import time
     detector = CloudHumanDetection("key.txt", "../environmentImage.jpg")
-    print(detector.identify_person())
+    
+    start_time = time.time()
+    output = detector.identify_person()
+    end_time = time.time()
+
+    print("Person detected:", output)
+    print(f"Human detection took {end_time - start_time:.2f} seconds.")
 
 if __name__ == "__main__":
     test()

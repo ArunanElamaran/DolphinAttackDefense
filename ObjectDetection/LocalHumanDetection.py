@@ -47,8 +47,15 @@ class LocalHumanDetection:
 
 # Example Usage
 def test():
+    import time
     detector = LocalHumanDetection("../environmentImage.jpg")
-    print("Person detected:", detector.identify_person())
+
+    start_time = time.time()
+    output = detector.identify_person()
+    end_time = time.time()
+
+    print("Person detected:", output)
+    print(f"Human detection took {end_time - start_time:.2f} seconds.")
 
 if __name__ == "__main__":
     test()
