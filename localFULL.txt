@@ -1,0 +1,71 @@
+------------- USING THE PHOTO WHERE I AM LOOKING AT THE CAMERA -------------
+Monitoring audio.mp3 for changes...
+audio.mp3 modified! Running tasks...
+Transcription Completed
+Transcription took 0.91 seconds.
+Person detected!
+Human detection took 2.21 seconds.
+REQUEST ACCEPTED
+Transcription Result:
+What is the weather like?
+Both threads finished
+
+
+
+audio.mp3 modified! Running tasks...
+Transcription Completed
+Transcription took 1.18 seconds.
+Person detected!
+Human detection took 2.21 seconds.
+REQUEST ACCEPTED
+Transcription Result:
+Remind me to take my medicine every evening this week.
+Both threads finished
+
+
+
+audio.mp3 modified! Running tasks...
+Transcription Completed
+Transcription took 0.89 seconds.
+Person detected!
+Human detection took 2.25 seconds.
+REQUEST ACCEPTED
+Transcription Result:
+What is the capital of France and can you share an interesting historical fact about it from 2020?
+Both threads finished
+
+------------- USING THE PHOTO WHERE I AM LOOKING AT THE WINDOW -------------
+Monitoring audio.mp3 for changes...
+audio.mp3 modified! Running tasks...
+Transcription Completed
+Transcription took 1.30 seconds.
+Person detected!
+Human detection took 2.24 seconds.
+REQUEST ACCEPTED
+Transcription Result:
+What is the weather like?
+Both threads finished
+
+
+
+audio.mp3 modified! Running tasks...
+Transcription Completed
+Transcription took 1.36 seconds.
+Person detected!
+Human detection took 2.16 seconds.
+REQUEST ACCEPTED
+Transcription Result:
+Remind me to take my medicine every evening this week.
+Both threads finished
+
+
+
+audio.mp3 modified! Running tasks...
+Transcription Completed
+Transcription took 1.42 seconds.
+Person detected!
+Human detection took 2.09 seconds.
+REQUEST ACCEPTED
+Transcription Result:
+What is the capital of France and can you share an interesting historical fact about it from 2020?
+Both threads finished

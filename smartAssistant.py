@@ -67,26 +67,35 @@ def human_detection():
     end_time = time.time()  # End timing
     print(f"Human detection took {end_time - start_time:.2f} seconds.")
 
+# Cooldown period (debounce) in seconds
+COOLDOWN_TIME = 1
+last_execution_time = 0
+debounce_timer = None
+
 # Custom Event Handler for file monitoring
 class AudioFileHandler(FileSystemEventHandler):
-    last_execution_time = 0
-    cooldown_time = 1  # Cooldown period in seconds
-
     def on_modified(self, event):
+        global last_execution_time, debounce_timer
+
         if event.src_path.endswith(TARGET_FILE):
             current_time = time.time()
-            if current_time - self.last_execution_time > self.cooldown_time:
-                print(f"{TARGET_FILE} modified! Running tasks...")
-                self.last_execution_time = current_time
-                run_threads()
 
-    # def on_created(self, event):
-    #     if event.src_path.endswith(TARGET_FILE):
-    #         current_time = time.time()
-    #         if current_time - self.last_execution_time > self.cooldown_time:
-    #             print(f"{TARGET_FILE} created! Running tasks...")
-    #             self.last_execution_time = current_time
-    #             run_threads()
+            # Reset the debounce timer if it exists
+            if debounce_timer:
+                debounce_timer.cancel()
+
+            # Start a new debounce timer
+            debounce_timer = threading.Timer(COOLDOWN_TIME, self.run_after_debounce)
+            debounce_timer.start()
+
+    def run_after_debounce(self):
+        global last_execution_time
+
+        current_time = time.time()
+        if current_time - last_execution_time > COOLDOWN_TIME:
+            print(f"{TARGET_FILE} modified! Running tasks...")
+            last_execution_time = current_time
+            run_threads()
 
 # Function to run two threads and retrieve transcription result
 def run_threads():
@@ -106,8 +115,10 @@ def run_threads():
 
     # If a person is detected, exit early
     if not person_detected_flag.is_set():
-        print("Exiting early from run_threads(). Person not detected.")
+        print("REQUEST REJECTED. Person not detected.\n\n\n")
         return
+
+    print("REQUEST ACCEPTED")
 
     # Otherwise, continue transcription
     thread1.join()
