@@ -34,9 +34,9 @@ class LocalHumanDetection:
             box = [round(i, 2) for i in box.tolist()]
             label_name = self.model.config.id2label[label.item()]
             
-            print(
-                f"Detected {label_name} with confidence {round(score.item(), 3)} at location {box}"
-            )
+            # print(
+            #     f"Detected {label_name} with confidence {round(score.item(), 3)} at location {box}"
+            # )
 
             # Check if the detected object is a person (COCO class "person" is typically ID 0)
             if label_name.lower() == "person":

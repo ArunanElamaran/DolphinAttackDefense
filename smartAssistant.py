@@ -23,8 +23,8 @@ environ_image = currentWorkingDirectory + 'environmentImage.jpg'
 depth_image = currentWorkingDirectory + 'depthImage.jpg'
 
 # Human Detection Model
-# humanDetector = CloudHumanDetection(currentWorkingDirectory+"key.txt", environ_image)
-humanDetector = LocalHumanDetection(environ_image)
+humanDetector = CloudHumanDetection(currentWorkingDirectory+"ObjectDetection/key.txt", environ_image)
+# humanDetector = LocalHumanDetection(environ_image)
 # camera = LidarCamera(environ_image, depth_image)
 
 # Shared flag for human detection
@@ -40,7 +40,8 @@ client = OpenAI(api_key=api_key)
 
 # Thread 1: Transcribe the recorded request
 def transcription():
-    print("Starting Whisper AI transcription...")
+    start_time = time.time()  # Start timing
+    # print("Starting Whisper AI transcription...")
     try:
         with open(TARGET_FILE, "rb") as audio_file:
             response = client.audio.transcriptions.create(model="whisper-1", file=audio_file)
@@ -49,18 +50,22 @@ def transcription():
     except Exception as e:
         print(f"Error in transcription: {e}")
         transcription_queue.put("Transcription failed.")
+    
+    end_time = time.time()  # End timing
+    print(f"Transcription took {end_time - start_time:.2f} seconds.")
 
 # Thread 2: Determine if there is a person present in the environment/setting
 def human_detection():
+    start_time = time.time()  # Start timing
     # Take Image
 
-
     # Run Cloud Human Detection
-    if humanDetector.identify_person() :
+    if humanDetector.identify_person():
         print("Person detected!")
         person_detected_flag.set()  # Set flag if a person is detected
-        
-    print("Human Detection Completed")
+
+    end_time = time.time()  # End timing
+    print(f"Human detection took {end_time - start_time:.2f} seconds.")
 
 # Custom Event Handler for file monitoring
 class AudioFileHandler(FileSystemEventHandler):
@@ -112,7 +117,7 @@ def run_threads():
         transcription_result = transcription_queue.get()
         print(f"Transcription Result:\n{transcription_result}")  # Use the returned transcription
 
-    print("Both threads finished")
+    print("Both threads finished\n\n\n")
 
 # Watchdog observer setup
 def monitor_directory():
