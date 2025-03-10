@@ -80,13 +80,13 @@ class AudioFileHandler(FileSystemEventHandler):
                 self.last_execution_time = current_time
                 run_threads()
 
-    def on_created(self, event):
-        if event.src_path.endswith(TARGET_FILE):
-            current_time = time.time()
-            if current_time - self.last_execution_time > self.cooldown_time:
-                print(f"{TARGET_FILE} created! Running tasks...")
-                self.last_execution_time = current_time
-                run_threads()
+    # def on_created(self, event):
+    #     if event.src_path.endswith(TARGET_FILE):
+    #         current_time = time.time()
+    #         if current_time - self.last_execution_time > self.cooldown_time:
+    #             print(f"{TARGET_FILE} created! Running tasks...")
+    #             self.last_execution_time = current_time
+    #             run_threads()
 
 # Function to run two threads and retrieve transcription result
 def run_threads():
