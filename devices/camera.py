@@ -11,77 +11,48 @@ class LidarCamera:
         self.depth_image_path = environ_image
         self.color_image_path = depth_image
 
-    def get_color_matrix(self):
-        pipeline = self.rs.pipeline()
-        config = self.rs.config()
-        context = self.rs.context()
-        devices = context.query_devices()
-        print(f"identifying {len(devices)} devices")
-
-        # ✅ Reduce resolution to 424x240 and FPS to 6 (USB 2.1 compatibility)
-        config.enable_stream(self.rs.stream.color, 424, 240, self.rs.format.bgr8, 6)
-
-        pipeline.start(config)
-        print("✅ Color stream started (USB 2.1 mode)")
-
-        try:
-            frames = pipeline.wait_for_frames(timeout_ms=10000)
-
-            # for _ in range(5):  # Skip initial frames for better quality
-            #     frames = pipeline.wait_for_frames(timeout_ms=10000)
-
-            # frames = pipeline.wait_for_frames(timeout_ms=10000)
-            color = frames.get_color_frame()
-
-            if not color:
-                print("❌ No color frame received!")
-                return None
-
-            print("✅ Color frame received!")
-            color_data = color.as_frame().get_data()
-            np_image = self.np.asanyarray(color_data)
-            return np_image
-
-        except Exception as e:
-            print(f"exception: {e}")
-            devices[0].hardware_reset()
-            print("reset device")
-
-
-        finally:
-            pipeline.stop()
-
     def get_depth_matrix(self):
+        # Create a context object. This object owns the handles to all connected realsense devices
         pipeline = self.rs.pipeline()
-        config = self.rs.config()
-
-        # ✅ Reduce depth resolution to 424x240 and FPS to 6 (USB 2.1 compatibility)
-        config.enable_stream(self.rs.stream.depth, 424, 240, self.rs.format.z16, 6)
-
-        pipeline.start(config)
-        print("✅ Depth stream started (USB 2.1 mode)")
+        pipeline.start()
 
         try:
-            for _ in range(5):  # Skip initial frames
-                frames = pipeline.wait_for_frames(timeout_ms=10000)
-
-            frames = pipeline.wait_for_frames(timeout_ms=10000)
-            depth = frames.get_depth_frame()
-
-            if not depth:
-                print("❌ No depth frame received!")
-                return None
-
-            print("✅ Depth frame received!")
-            depth_data = depth.as_frame().get_data()
-            np_image = self.np.asanyarray(depth_data)
-
-            # ✅ Apply color mapping for better visualization
-            np_image = cv2.applyColorMap(cv2.convertScaleAbs(np_image, alpha=0.03), cv2.COLORMAP_JET)
-            return np_image
-
+            while True:
+            # Create a pipeline object. This object configures the streaming camera and owns it's handle
+                for i in range(3):
+                	frames = pipeline.wait_for_frames()
+                frames = pipeline.wait_for_frames()
+                depth = frames.get_depth_frame()
+                if not depth: 
+                    continue
+                depth_data = depth.as_frame().get_data()
+                np_image = self.np.asanyarray(depth_data)
+                np_image = cv2.applyColorMap(cv2.convertScaleAbs(np_image, alpha=0.03), cv2.COLORMAP_JET) #added color overlay
+                return np_image
+                break
         finally:
             pipeline.stop()
+
+    def get_color_matrix(self):
+        pipeline =self.rs.pipeline()
+        pipeline.start()
+
+        try:
+            while True:
+            # Create a pipeline object. This object configures the streaming camera and owns it's handle
+                for i in range(3):
+                	frames = pipeline.wait_for_frames()
+                frames = pipeline.wait_for_frames()
+                color = frames.get_color_frame()
+                if not color:
+                    continue
+                color_data = color.as_frame().get_data()
+                np_image = self.np.asanyarray(color_data)
+                return np_image
+                break
+        finally:
+            pipeline.stop()
+
 
     def get_depth_image(self):
         matrix = self.get_depth_matrix()
@@ -105,8 +76,8 @@ def test():
     print("📷 Capturing color image...")
     camera.get_color_image()
 
-    # print("📏 Capturing depth image...")
-    # camera.get_depth_image()
+    print("📏 Capturing depth image...")
+    camera.get_depth_image()
 
 if __name__ == "__main__":
     test()
